@@ -5,6 +5,7 @@ import path from 'node:path';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { Pool } from 'pg';
 import { createEngine, createFsH5PStorages } from '../../src/runtime/index.js';
+import { InMemoryCourseStore, InMemoryLearningRecordStore } from '../../src/testing/index.js';
 import { PgExampleStore } from './support/pg-example-adapter.js';
 
 describe('engine boots end-to-end against a real database (SC-001)', () => {
@@ -29,7 +30,12 @@ describe('engine boots end-to-end against a real database (SC-001)', () => {
     await store.init();
 
     const engine = createEngine({
-      adapters: { exampleStore: store },
+      adapters: {
+        exampleStore: store,
+        // The full Postgres path for these ports is the 002 example smoke (example/tests).
+        courseStore: new InMemoryCourseStore(),
+        learningRecordStore: new InMemoryLearningRecordStore(),
+      },
       h5pStorages: createFsH5PStorages(h5pBase),
     });
 

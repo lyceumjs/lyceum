@@ -32,14 +32,24 @@ pnpm h5p:fetch-core           # download H5P core + editor static assets into h5
 
 - `pnpm dev` — docker-compose Postgres for local development + fetch H5P assets.
 - `pnpm build` — `tsc` → ESM + `.d.ts` in `dist/`.
-- `pnpm boundary` — enforce the core import boundary.
+- `pnpm boundary` — enforce the core import boundary (`boundary:example` for the example's).
 - `pnpm test` — unit + contract suites (no database needed; proves db-agnosticism, SC-002).
 - `pnpm test:smoke` — boots the engine + H5P runtime against an ephemeral Postgres
   (Testcontainers) and round-trips a record (SC-001). **Self-contained** — does not require
   `pnpm dev` first. Requires Docker.
-- `pnpm verify` — boundary + build + unit/contract + smoke.
+- `pnpm verify` — boundaries + build + unit/contract + smoke.
+
+## Example host (see it run)
+
+The dev-only [`example/`](example/README.md) workspace is both the functional smoke harness and
+the living reference for wiring Lyceum into a host:
+
+```bash
+pnpm example:smoke   # hermetic end-to-end proof against an ephemeral Postgres (pass/fail)
+pnpm example:dev     # runnable host on http://localhost:3020 — play real H5P in the browser
+```
 
 ## Status
 
-Foundation (feature `001-foundation`). The LMS domain model and the example smoke harness
-(feature `002`) build on top of this skeleton.
+Foundation (feature `001-foundation`) + the first domain slice (course hierarchy, learning
+records) with the example smoke harness & dev host (feature `002-example-smoke-harness`).

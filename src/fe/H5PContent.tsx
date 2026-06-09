@@ -11,6 +11,11 @@ export interface H5PContentProps {
     readOnlyState?: boolean,
   ) => Promise<unknown>;
   onInitialized?: (contentId: string) => void;
+  /**
+   * Fired for every xAPI statement the content emits — the host forwards these
+   * to its learning-records sink (ADR 0001 seam).
+   */
+  onxAPIStatement?: (statement: unknown, context: unknown, event: unknown) => void;
 }
 
 /**
@@ -28,6 +33,7 @@ export function H5PContent(props: H5PContentProps): ReactElement {
         contentId={props.contentId}
         loadContentCallback={props.loadContentCallback as never}
         onInitialized={props.onInitialized}
+        onxAPIStatement={props.onxAPIStatement as never}
       />
     </div>
   );

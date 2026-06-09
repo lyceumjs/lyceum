@@ -7,7 +7,8 @@ set -euo pipefail
 
 DEST="${H5P_DATA_DIR:-./h5p-data}"
 CORE_TAG="${H5P_CORE_TAG:-1.27.0}"
-EDITOR_TAG="${H5P_EDITOR_TAG:-1.27.0}"
+# The editor repo has no plain version tags — the moodle-* line tracks upstream releases.
+EDITOR_TAG="${H5P_EDITOR_TAG:-moodle-1.27.2}"
 
 mkdir -p "$DEST/core" "$DEST/editor"
 

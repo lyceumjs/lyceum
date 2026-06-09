@@ -32,3 +32,6 @@ h5p-data/
 
 # Agent local settings (may hold credentials/tokens)
 .claude/settings.local.json
+
+# Example host build artifact (esbuild output)
+example/public/app.js
