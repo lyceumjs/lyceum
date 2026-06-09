@@ -34,4 +34,5 @@ See [.specify/memory/constitution.md](.specify/memory/constitution.md) for proje
 <!-- SPECKIT START -->
 For additional context about technologies to be used, project structure,
 shell commands, and other important information, read the current plan
+at specs/001-foundation/plan.md
 <!-- SPECKIT END -->

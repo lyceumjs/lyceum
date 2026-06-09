@@ -23,6 +23,9 @@ yarn-error.log*
 # Test / coverage
 coverage/
 
+# H5P core/editor assets + fs storage (fetched/generated, never committed)
+h5p-data/
+
 # OS / editor
 .DS_Store
 *.swp

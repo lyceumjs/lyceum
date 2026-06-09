@@ -55,8 +55,8 @@ adapter (or an in-memory fake) with no PostgreSQL dependency.
 
 - What happens when no storage adapter is configured? The engine SHOULD fail fast with a clear
   message rather than assuming a database.
-- How does the H5P backend plug into the `lms-starter-kit`? [NEEDS CLARIFICATION: integration path
-  to be worked out by Valery].
+- How does the H5P backend plug into the `lms-starter-kit`? Decided in
+  [ADR 0001 — Host-integration architecture](../adr/0001-integration-architecture.md).
 
 ## Requirements *(mandatory)*
 
@@ -71,13 +71,14 @@ adapter (or an in-memory fake) with no PostgreSQL dependency.
 - **FR-004**: The project MUST ship a Dockerized local development environment including a
   PostgreSQL container for local development and smoke testing.
 - **FR-005**: Business logic MUST be developed test-first and stay covered by automated tests
-  (SDD + TDD). [NEEDS CLARIFICATION: test runner — e.g. Vitest].
+  (SDD + TDD). The test runner is **Vitest** (decided by Valery, 2026-06-09).
 - **FR-006**: The public integration surface MUST be small and documented, with sane opinionated
   defaults so a host project can adopt Lyceum with minimal wiring.
 - **FR-007**: The repository MUST carry a commercially unrestricted (MIT-class) open-source license
   and MUST NOT commit secrets.
 - **FR-008**: The H5P backend's integration into the `lms-starter-kit` MUST be defined before that
-  integration ships. [NEEDS CLARIFICATION: approach].
+  integration ships. Defined in
+  [ADR 0001 — Host-integration architecture](../adr/0001-integration-architecture.md).
 
 ### Key Entities
 
