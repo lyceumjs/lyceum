@@ -1,0 +1,66 @@
+{
+  "name": "@lyceumjs/lms",
+  "version": "0.0.0",
+  "description": "Lyceum — open-source, database-agnostic, H5P-based LMS engine.",
+  "license": "MIT",
+  "author": "Valery Gutu <valeriu.manifest@gmail.com>",
+  "type": "module",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20.9"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/core/index.d.ts",
+      "default": "./dist/core/index.js"
+    },
+    "./runtime": {
+      "types": "./dist/runtime/index.d.ts",
+      "default": "./dist/runtime/index.js"
+    },
+    "./fe": {
+      "types": "./dist/fe/index.d.ts",
+      "default": "./dist/fe/index.js"
+    },
+    "./testing": {
+      "types": "./dist/testing/index.d.ts",
+      "default": "./dist/testing/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "h5p:fetch-core": "bash scripts/download-h5p-core.sh",
+    "dev": "docker compose up -d && pnpm h5p:fetch-core",
+    "example:smoke": "pnpm build && pnpm --filter @lyceumjs/lms-example smoke",
+    "example:dev": "pnpm build && docker compose up -d --wait && pnpm h5p:fetch-core && pnpm --filter @lyceumjs/lms-example dev",
+    "build": "tsc -p tsconfig.json",
+    "boundary": "depcruise src --config .dependency-cruiser.cjs",
+    "boundary:example": "depcruise example/src example/tests --config example/.dependency-cruiser.cjs",
+    "test:unit": "vitest run tests/unit",
+    "test:contract": "vitest run tests/contract",
+    "test:smoke": "vitest run tests/smoke",
+    "test": "vitest run tests/unit tests/contract",
+    "verify": "pnpm boundary && pnpm boundary:example && pnpm build && pnpm test && pnpm test:smoke"
+  },
+  "dependencies": {
+    "@lumieducation/h5p-react": "10.0.4",
+    "@lumieducation/h5p-server": "10.0.4",
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@testcontainers/postgresql": "^11.0.0",
+    "@testing-library/react": "^16.0.0",
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.11.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "dependency-cruiser": "^16.0.0",
+    "jsdom": "^25.0.0",
+    "pg": "^8.13.0",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.0"
+  }
+}

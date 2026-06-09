@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.*
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test / coverage
+coverage/
+
+# H5P core/editor assets + fs storage (fetched/generated, never committed)
+h5p-data/
+
+# OS / editor
+.DS_Store
+*.swp
+
+# Agent local settings (may hold credentials/tokens)
+.claude/settings.local.json
+
+# Example host build artifact (esbuild output)
+example/public/app.js

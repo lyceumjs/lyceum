@@ -1,0 +1,3 @@
+# The engine (repo root) is the only published package; example/ is a private dev-only host (FR-001).
+packages:
+  - example
