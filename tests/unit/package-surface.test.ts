@@ -16,6 +16,37 @@ describe('public package surface (contracts/package-surface.md)', () => {
     expect(typeof core.listActorRecords).toBe('function');
   });
 
+  it('core (".") exports the authoring operation surface (003 R1)', async () => {
+    const core = await import('../../src/core/index.js');
+    for (const operation of [
+      'createCourse',
+      'updateCourseInfo',
+      'getCourse',
+      'deleteCourse',
+      'addUnit',
+      'renameUnit',
+      'reorderUnits',
+      'removeUnit',
+      'addLesson',
+      'renameLesson',
+      'reorderLessons',
+      'removeLesson',
+      'attachContent',
+      'removeContent',
+      'listCatalog',
+    ] as const) {
+      expect(typeof core[operation], `core.${operation}`).toBe('function');
+    }
+  });
+
+  it('core (".") exports the typed domain error (003 R5)', async () => {
+    const core = await import('../../src/core/index.js');
+    expect(typeof core.LyceumDomainError).toBe('function');
+    const error = new core.LyceumDomainError('NOT_FOUND', 'Lyceum: x not found.');
+    expect(error).toBeInstanceOf(Error);
+    expect(error.code).toBe('NOT_FOUND');
+  });
+
   it('runtime ("./runtime") exports the engine + H5P runtime factory', async () => {
     const runtime = await import('../../src/runtime/index.js');
     expect(typeof runtime.createEngine).toBe('function');

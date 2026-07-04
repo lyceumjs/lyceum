@@ -27,7 +27,8 @@ const DATABASE_URL = process.env.DATABASE_URL ?? 'postgres://lyceum:lyceum@local
 const PORT = Number(process.env.PORT ?? 3020);
 const H5P_DATA_DIR = path.resolve(repoRoot, process.env.H5P_DATA_DIR ?? './h5p-data');
 const FIXTURE = path.resolve(here, '..', 'fixtures', 'lyceum-demo.h5p');
-const DEMO_COURSE_ID = 'course-demo';
+// Ids are engine-minted (spec 003 R2), so the demo course is found by its slug.
+const DEMO_COURSE_SLUG = 'lyceum-demo';
 
 function fail(message: string): never {
   console.error(`\n[lyceum-example] ${message}\n`);
@@ -65,8 +66,11 @@ engine.h5p.config.setFinishedEnabled = false;
 engine.h5p.config.contentUserStateSaveInterval = false;
 
 // --- Idempotent install: fixture content + demo course (dev DB persists) -----
-let contentId = (await engine.getCourse(DEMO_COURSE_ID))?.units[0]?.lessons[0]?.contents[0]
-  ?.h5pContentId;
+// The demo course is authored through the 003 operation surface; its engine-minted
+// id is recovered via the catalog by slug on every boot.
+const demoSummary = (await engine.listCatalog()).find((entry) => entry.slug === DEMO_COURSE_SLUG);
+let demoCourse = demoSummary ? await engine.getCourse(demoSummary.id) : undefined;
+let contentId = demoCourse?.units[0]?.lessons[0]?.contents[0]?.h5pContentId;
 if (contentId) {
   // The course row may outlive the H5P fs storage — verify the content still exists.
   try {
@@ -77,24 +81,25 @@ if (contentId) {
 }
 if (!contentId) {
   ({ contentId } = await installFixture(engine, FIXTURE, DEMO_LEARNER));
-  await engine.createCourse({
-    id: DEMO_COURSE_ID,
+  if (demoCourse) {
+    // Stale course whose content vanished from the H5P storage — rebuild it clean.
+    await engine.deleteCourse(demoCourse.id);
+  }
+  demoCourse = await engine.createCourse({
     title: 'Lyceum Demo Course',
-    units: [
-      {
-        id: 'unit-demo',
-        title: 'Demo Unit',
-        lessons: [
-          {
-            id: 'lesson-demo',
-            title: 'Play the quiz',
-            contents: [{ id: 'content-demo', title: 'Lyceum Demo Quiz', h5pContentId: contentId }],
-          },
-        ],
-      },
-    ],
+    slug: DEMO_COURSE_SLUG,
+    description: 'Plays the committed H5P fixture through the runtime handlers.',
+  });
+  const unit = await engine.addUnit(demoCourse.id, { title: 'Demo Unit' });
+  const lesson = await engine.addLesson(demoCourse.id, unit.id, { title: 'Play the quiz' });
+  await engine.attachContent(demoCourse.id, unit.id, lesson.id, {
+    title: 'Lyceum Demo Quiz',
+    h5pContentId: contentId,
   });
   console.log(`[lyceum-example] installed fixture (content ${contentId}) + demo course`);
+}
+if (!demoCourse) {
+  fail('demo course missing after install — the course store is misbehaving');
 }
 
 // --- HTTP mounting seam (ADR 0001) -------------------------------------------
@@ -104,7 +109,7 @@ app.use(
   '/api',
   createApiRouter(engine, {
     fixtureContentId: contentId,
-    demoCourseId: DEMO_COURSE_ID,
+    demoCourseId: demoCourse.id,
     actor: DEMO_LEARNER.id,
   }),
 );
